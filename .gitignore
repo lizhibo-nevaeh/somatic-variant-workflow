@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Snakemake
+.snakemake/
+
+# Logs / temporary outputs
+*.log
+*.out
+*.err
+.tmp/
+tmp/
+
+# Large genomics data and workflow outputs
+*.bam
+*.bai
+*.cram
+*.crai
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+*.vcf
+*.vcf.gz
+*.tbi
+*.bcf
+*.bcf.gz
+results/
+
+# OS / editor
+.DS_Store
+.vscode/

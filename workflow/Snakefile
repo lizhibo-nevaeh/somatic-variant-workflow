@@ -1,0 +1,21 @@
+# Modular somatic resequencing workflow
+
+include: "rules/00_common.smk"
+
+localrules: all
+
+rule all:
+    input:
+        expand(f"{OUT}/tmb/{{tumor}}.tmb.tsv", tumor=TUMORS)
+
+include: "rules/01_preprocessing.smk"
+include: "rules/01_5_qc.smk"
+include: "rules/01_6_pair_qc.smk"
+include: "rules/01_7_normal_contam_qc.smk"
+include: "rules/02_pon_build.smk"
+include: "rules/02_somatic_calling.smk"
+include: "rules/03_annotation_tmb.smk"
+include: "rules/04_tmb_summary.smk"
+include: "rules/05_sequenza.smk"
+include: "rules/05_cnv.smk"
+include: "rules/06_msi.smk"

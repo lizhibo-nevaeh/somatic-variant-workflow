@@ -1,0 +1,154 @@
+# Example configuration.
+# Replace all /path/to/... placeholders before running.
+
+project: example_project
+source_root: /path/to/project
+output_root: /path/to/project/results
+pairs: config/pairs.example.tsv
+
+mode:
+  pon: noPON          # noPON or PON
+  seq_type: WES       # WES or WGS
+
+cluster:
+  partition: compute  # change to your Slurm partition; ignored by local execution
+
+preprocessing:
+  fastq_dir: /path/to/fastq
+  fastq_r1_pattern: "{fastq_dir}/{sample}/{sample}_R1.fastq.gz"
+  fastq_r2_pattern: "{fastq_dir}/{sample}/{sample}_R2.fastq.gz"
+  keep_clean_fastq: false
+  rg_lb: WES
+  rg_platform: Illumina
+  fastp_min_length: 50
+  fastp_extra_args: "-5 -3"
+  bwa_min_score: 0
+  java_mem_g: 32
+
+somatic_calling:
+  enabled: true
+  call_mode: cpu      # cpu or existing
+  java_mem_g: 80
+  # bqsr_bam_dir: /path/to/existing/BQSR
+  # existing_calling:
+  #   raw_vcf_dir: /path/to/raw_vcf
+  #   f1r2_dir: /path/to/f1r2
+
+inputs:
+  # Required only when somatic_calling.enabled is false.
+  filtered_vcf_dir: /path/to/filtered_vcf
+  filtered_vcf_suffix: _noPON_filtered.vcf.gz
+
+references:
+  fasta: /path/to/reference/GRCh38.fasta
+  intervals: /path/to/reference/calling_regions.interval_list
+  gnomad_af: /path/to/reference/af-only-gnomad.hg38.vcf.gz
+  clinvar: /path/to/reference/clinvar.vcf.gz
+  vep_cache: /path/to/vep_cache
+  somalier_sites: /path/to/reference/sites.hg38.vcf.gz
+  known_sites:
+    - /path/to/reference/1000G_phase1.snps.high_confidence.hg38.vcf.gz
+    - /path/to/reference/dbsnp.hg38.vcf.gz
+    - /path/to/reference/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
+    - /path/to/reference/1000G_omni.hg38.vcf.gz
+
+tools:
+  # Leave empty when tools are already available on PATH.
+  env_file: ""
+  fastp: fastp
+  bwa: bwa
+  samtools: samtools
+  sambamba: sambamba
+  gatk: gatk
+  vep: /path/to/ensembl-vep/vep
+  vcf2maf: /path/to/vcf2maf.pl
+  python: python3
+  # Optional for custom Perl/VEP installations.
+  vep_perl_bin: ""
+  vep_perl5lib: ""
+  # Optional overrides; bundled scripts are used by default.
+  # tmb_script: scripts/calculate_tmb.py
+  # tmb_summary: scripts/summarize_tmb.py
+
+resources:
+  fastp: {threads: 8, mem_mb: 8000}
+  bwa_sort: {threads: 8, mem_mb: 32000}
+  markdup: {threads: 8, mem_mb: 32000}
+  bqsr: {threads: 8, mem_mb: 40000}
+  mutect2: {threads: 16, mem_mb: 96000}
+  learn_orientation: {threads: 16, mem_mb: 96000}
+  pileup: {threads: 16, mem_mb: 96000}
+  contamination: {threads: 16, mem_mb: 96000}
+  filter_mutect: {threads: 16, mem_mb: 96000}
+
+pon_build:
+  queue: compute
+  batch_size: 50
+  step2a_threads: 16
+  step2a_mem_mb: 50000
+  step2a_runtime: 60000
+  step2b_threads: 24
+  step2b_mem_mb: 100000
+  step2b_runtime: 60000
+
+qc:
+  queue: compute
+  threads: 4
+  mem_mb: 8000
+  runtime: 120
+
+pair_qc:
+  somalier: somalier
+  sites: /path/to/reference/sites.hg38.vcf.gz
+  reference: /path/to/reference/GRCh38.fasta
+  relatedness_pass: 0.90
+  concordance_pass: 0.90
+  queue: compute
+  threads: 2
+  mem_mb: 8000
+  runtime: 60
+
+tmb:
+  exome_size_mb: 38.0
+  high_cutoff: 10.0
+
+cohort:
+  label: example_cohort
+
+sequenza:
+  bam_suffix: .BQSR.bam
+  ref_fasta: /path/to/reference/GRCh38.fasta
+  gc_wiggle: /path/to/reference/GRCh38.gc50.wig.gz
+  sequenza_bin_dir: /path/to/sequenza/bin
+  sequenza_utils: /path/to/sequenza/bin/sequenza-utils
+  rscript: Rscript
+  default_gender: male
+  bin_size: 50
+  queue: compute
+  threads: 8
+  mem_gb: 64
+  mem_mb: 64000
+  runtime: 1440
+  walltime: "24:00:00"
+
+cnv:
+  bqsr_dir: /path/to/project/results/BQSR
+  sequenza_source: workflow
+  targets: /path/to/reference/targets.bed   # required for WES; leave empty for WGS
+  access: ""
+  cnvkit: cnvkit.py
+  queue: compute
+  threads: 8
+  mem_mb: 50000
+  runtime: 1440
+
+msi:
+  msisensor: msisensor-pro
+  sites: /path/to/reference/GRCh38.msisensor-pro.sites.list
+  bed: ""
+  coverage_threshold: 20
+  fdr: 0.05
+  queue: compute
+  threads: 4
+  mem_mb: 16000
+  runtime: 120
