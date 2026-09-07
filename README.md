@@ -86,3 +86,19 @@ The default `rule all` produces per-tumor TMB results. Individual modules can al
 ## Notes
 
 Large reference files and software installations are not included. Review reference versions, parameters and compute resources before running the workflow.
+
+## Usage & attribution
+
+This repository is shared as part of my academic and technical portfolio.
+
+No open-source license is granted. Reuse, redistribution, or republication
+of substantial portions of this repository is not permitted without prior
+permission.
+
+If you would like to reuse or adapt any part of this work, please contact
+the author and provide appropriate attribution.
+
+**Author:** Zhibo Li
+
+© 2026 Zhibo Li. All rights reserved.
+
